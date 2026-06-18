@@ -4,7 +4,7 @@ const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-// Puxa a chave de forma segura e oculta
+// Puxa a chave de forma segura e oculta do arquivo .env
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const app = express();
@@ -59,7 +59,8 @@ app.post('/api/chat', async (req, res) => {
         if (err) return res.status(500).json({ error: err.message });
 
         try {
-            const modeloIA = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+            // ALTERADO PARA O MODELO MAIS LEVE E ECONÔMICO (FLASH-LITE)
+            const modeloIA = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
             
             const prompt = `
             Você é um assistente virtual especialista em máquinas agrícolas da loja Agroforte Pneus e Rodas.
@@ -81,7 +82,7 @@ app.post('/api/chat', async (req, res) => {
             res.json({ resposta: respostaIA });
         } catch (error) {
             console.error("Erro na API do Gemini:", error);
-            res.status(500).json({ error: "Erro ao falar com a IA." });
+            res.status(500).json({ error: "Erro ao falar com a IA. Provavelmente a cota foi atingida. Tente novamente em alguns minutos." });
         }
     });
 });
